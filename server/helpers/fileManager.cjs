@@ -117,14 +117,39 @@ module.exports.returnListOfFiles = (folderName) => {
     });
   });
 };
-module.exports.addFile = (trace, file) => {
-  null;
+module.exports.addFile = (route, file) => {
+  const filePath = path.join(UsersPath, route)
+  fs.writeFile(filePath, file, (err) => {
+    if (err) {
+      return {message: `Błąd podczas tworzenia ${filePath}: ${err}`};
+    } else {
+      return {message: `Utworzono plik: ${filePath} `};
+    }
+  });
+  return {message: "dodano plik"}
 };
 
-module.exports.delFile = (trace) => {
-  null;
+module.exports.delFile = (route) => {
+  filePath = path.join(UsersPath, route)
+  fs.rmSync(filePath, (err) => {
+    if (err) {
+      return {message: `Błąd podczas usuwania pliku pod ścieżką ${filePath}`};
+    } else {
+      return {message: `Usunięto plik znajdujący się pod ścieżką ${filePath}`};
+    }
+  });
 };
 
-module.exports.exportFile = (trace) => {
-  null;
+module.exports.getFile = (route) => {
+  return new Promise((resolve,reject) =>{
+    filePath = path.join(UsersPath, route)
+    fs.readFileSync(route,(err, data)=>{
+      if(err){
+        reject({message: `błąd odczytu pliku`})
+      }  
+      else{
+        resolve({message: `udało się odczytać plik`, data: data})
+      }
+    })
+  })
 };

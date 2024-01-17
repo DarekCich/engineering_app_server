@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { returnListOfFiles, addFile, exportFile } from '../../../helpers/fileManager.cjs'
+import { returnListOfFiles, addFile, getFile } from '../../../helpers/fileManager.cjs'
 const router = Router();
 
 
@@ -17,11 +17,11 @@ router.get('/list', async (req, res) => {
   }
 });
 
-router.put('/file', async (req, res) => {
+router.post('/file', async (req, res) => {
   try {
-    const trace = req.body.route;
+    const route = req.body.route;
     const file = req.body.file;
-    addFile(trace, file);
+    addFile(route, file);
     res.json([{status:200, message: "Ok"}]);
   } catch (error) {
     res.status(500).json(error);
@@ -29,18 +29,18 @@ router.put('/file', async (req, res) => {
 });
 router.delete('/file', async (req, res) => {
   try {
-    const trace = req.body.route;
-    delFile(trace);
+    const route = req.body.route;
+    delFile(route);
     res.json([{status:200, message: "Ok"}]);
   } catch (error) {
     res.status(500).json(error);
   }
 });
 
-router.get('/export', async (req, res) => {
+router.get('/file', async (req, res) => {
   try {
     const filename = req.user.filename;
-    const file = exportFile(filename);
+    const file = getFile(filename);
     res.json([{status:200, message: "Ok", file: file}]);
   } catch (error) {
     res.status(500).json(error);
