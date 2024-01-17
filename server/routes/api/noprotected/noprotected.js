@@ -3,6 +3,7 @@ import { registerUser, loginUser } from '../../../helpers/userManager.js';
 import jwt from 'jsonwebtoken';
 const router = Router();
 const secretKey = 'sekretny_klucz'
+
 // Skonfiguruj dostęp do katalogu `/web` na ścieżce '/'
 
 // Dla ścieżki '/' dostarcz plik index.html
@@ -12,6 +13,7 @@ router.post('/register', async (req, res) => {
   res.json(response);
 });
 
+// Endpoint logowania użytkownika
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   const response = await loginUser(username, password);
@@ -19,10 +21,11 @@ router.post('/login', async (req, res) => {
     // Przykładowe dane użytkownika
     const userData = {
       userId: 123,
-      username: username  // Użyj nazwy użytkownika z żądania
+      username: username // Użyj nazwy użytkownika z żądania
     };
-
+    
     const token = jwt.sign(userData, secretKey, { expiresIn: '1h' });
+    res.cookie('jwt', token)
     res.setHeader('Authorization', `Bearer ${token}`);
   }
   res.json(response);

@@ -1,7 +1,7 @@
 
 //----------------------------------------------------------------------\\
 // Potrzebne importy 
-import { createFolder, findFolder, decryptUserData } from "./fileManager.cjs";
+import { createUserFiles, findFolder, decryptUserData } from "./fileManager.cjs";
 
 //----------------------------------------------------------------------\\
 
@@ -29,7 +29,7 @@ export async function registerUser(username, password) {
         code: 1
       };
     } else {
-      const folderCreated = await createFolder(username, password);
+      const folderCreated = await createUserFiles(username, password);
       if (folderCreated) {
         return {
           message: `Pomyślnie zarejestrowano użytkownika ${username}`,
@@ -79,7 +79,7 @@ export async function loginUser(username, password) {
         code: 1,
       };
     } else {
-      const loginSuccessful = await decryptUserData(username, password);
+      const loginSuccessful = decryptUserData(username, password);
 
       if (loginSuccessful) {
         return {
