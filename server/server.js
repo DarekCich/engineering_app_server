@@ -28,9 +28,9 @@ app.use((req, res, next) => {
 app.use('/website', websiteRoutes); // Przeniesione pod odpowiednie miejsce
 app.use('/api', apiRoutes); // Przeniesione pod odpowiednie miejsce
 
-app.use((req, res) => {
-  res.redirect('/website/home');
-});
+// app.use((req, res) => {
+//   res.redirect('/website/home');
+// });
 
 const server = app.listen(port, () => {
   const serverUrl = `http://localhost:${server.address().port}`;

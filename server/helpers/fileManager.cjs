@@ -1,7 +1,8 @@
-const fs = require('fs');
+const fs = require('fs/promises');
 const CryptoJS = require('crypto-js');
 const path = require('path');
 const UsersPath = path.join(__dirname, '../../users')
+const util = require('util');
 
 // Funkcja do szyfrowania zawartości folderu
 module.exports.encryptfile = ((filePath, password)=> {
@@ -94,7 +95,7 @@ module.exports.returnListOfFiles = (folderName) => {
         const fileDetails = file.name;
 
         if (file.isDirectory()) {
-          module.exports.returnListOfFiles(path.join(folderName, file.name))
+          returnListOfFiles(path.join(folderName, file.name))
             .then(subFiles => {
               fileList.push({ "name": file.name, "files": subFiles });
 
@@ -117,25 +118,28 @@ module.exports.returnListOfFiles = (folderName) => {
     });
   });
 };
-module.exports.addFile = (route, file) => {
-  const filePath = path.join(UsersPath, route)
-  fs.writeFile(filePath, file, (err) => {
-    if (err) {
-      return {message: `Błąd podczas tworzenia ${filePath}: ${err}`};
-    } else {
-      return {message: `Utworzono plik: ${filePath} `};
-    }
-  });
-  return {message: "dodano plik"}
+
+module.exports.addFile = async (route, file) => {
+  const filePath = path.join(UsersPath, route);
+  const directoryPath = filePath.substring(0, filePath.lastIndexOf(path.sep) + 1);
+
+  try {
+    var tmp = await fs.mkdir(directoryPath, { recursive: true });
+    await fs.writeFile(filePath, file, (err)=>
+    null);
+    return { message: `Utworzono plik: ${filePath}`, status: 200 };
+  } catch (err) {
+    return { message: `Błąd podczas tworzenia ${filePath}: ${err}`, status: 400 };
+  }
 };
 
 module.exports.delFile = (route) => {
   filePath = path.join(UsersPath, route)
   fs.rmSync(filePath, (err) => {
     if (err) {
-      return {message: `Błąd podczas usuwania pliku pod ścieżką ${filePath}`};
+      return {message: `Błąd podczas usuwania pliku pod ścieżką ${filePath}`, status: 400};
     } else {
-      return {message: `Usunięto plik znajdujący się pod ścieżką ${filePath}`};
+      return {message: `Usunięto plik znajdujący się pod ścieżką ${filePath}`, status: 200};
     }
   });
 };
